@@ -1,0 +1,244 @@
+/* ==========================================================================
+   SMART GESTURE CANVAS - ACCESSIBILITY VIRTUAL KEYBOARD STYLES
+   ========================================================================== */
+
+.keyboard-view-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+/* Text Input & Preview Display Box */
+.keyboard-output-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem 1.5rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.text-preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.text-preview-label {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--accent-cyan-light);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.text-action-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.keyboard-text-display {
+  width: 100%;
+  min-height: 90px;
+  max-height: 160px;
+  background: var(--bg-surface-elevated);
+  border: 2px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.25rem;
+  font-family: var(--font-body);
+  font-size: 1.35rem;
+  color: #ffffff;
+  overflow-y: auto;
+  line-height: 1.4;
+  word-break: break-word;
+  outline: none;
+  white-space: pre-wrap;
+  position: relative;
+}
+
+.keyboard-text-display:focus {
+  border-color: var(--border-focus);
+}
+
+.keyboard-caret {
+  display: inline-block;
+  width: 3px;
+  height: 1.3em;
+  background: var(--accent-cyan);
+  vertical-align: text-bottom;
+  animation: blink-caret 1s infinite;
+}
+
+@keyframes blink-caret {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* Predictive Word Chips */
+.prediction-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  overflow-x: auto;
+  padding: 0.5rem 0 0.2rem;
+  scrollbar-width: none;
+}
+
+.prediction-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.prediction-chip {
+  padding: 0.45rem 1rem;
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-full);
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+}
+
+.prediction-chip:hover {
+  background: var(--accent-indigo);
+  border-color: var(--accent-indigo);
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+/* Keyboard Toolbar & Settings */
+.keyboard-controls-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1.25rem;
+}
+
+.keyboard-mode-toggles {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+/* Virtual Keyboard Grid Layout */
+.virtual-keyboard-board {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-md);
+}
+
+.kb-row {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+/* Key Base Styles */
+.kb-key {
+  flex: 1;
+  min-width: 44px;
+  height: 58px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface-elevated);
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 120ms ease;
+  user-select: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.kb-key:hover {
+  background: var(--bg-surface-hover);
+  border-color: var(--border-medium);
+  transform: translateY(-2px);
+}
+
+.kb-key:active {
+  transform: translateY(1px);
+  background: var(--accent-indigo);
+  color: #ffffff;
+}
+
+/* Special Functional Keys */
+.kb-key.key-wide { flex: 1.5; font-size: 0.95rem; }
+.kb-key.key-extra-wide { flex: 2; font-size: 0.95rem; }
+.kb-key.key-space { flex: 5; font-size: 1rem; }
+.kb-key.key-accent {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(6, 182, 212, 0.25));
+  border-color: var(--border-medium);
+}
+
+.kb-key.key-accent:hover {
+  background: var(--accent-indigo);
+  color: #ffffff;
+}
+
+.kb-key.key-active {
+  background: var(--accent-indigo) !important;
+  color: #ffffff !important;
+  border-color: var(--accent-cyan) !important;
+}
+
+/* Keyboard Size Scaling */
+.virtual-keyboard-board.size-small .kb-key {
+  height: 48px;
+  font-size: 1.05rem;
+}
+
+.virtual-keyboard-board.size-medium .kb-key {
+  height: 58px;
+  font-size: 1.2rem;
+}
+
+.virtual-keyboard-board.size-large .kb-key {
+  height: 72px;
+  font-size: 1.45rem;
+}
+
+/* ==========================================================================
+   KEYBOARD SCAN MODE (Assistive Highlight Cycling)
+   ========================================================================== */
+.kb-key.scan-highlighted {
+  border: 3px solid #ffea00 !important;
+  background: #ffea00 !important;
+  color: #000000 !important;
+  transform: scale(1.08) !important;
+  box-shadow: 0 0 25px rgba(255, 234, 0, 0.8) !important;
+  z-index: 5;
+}
+
+.scan-status-banner {
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  color: #fde68a;
+  padding: 0.6rem 1rem;
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}

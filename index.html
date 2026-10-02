@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Gesture Canvas | Accessible Gesture-Powered Computing</title>
+  <meta name="description" content="Assistive software dashboard for people with physical disabilities to draw, type, and control computers using hand gestures.">
+  <link rel="icon" type="image/svg+xml" href="/src/assets/logo.svg">
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/src/styles/main.css">
+  <link rel="stylesheet" href="/src/styles/components.css">
+  <link rel="stylesheet" href="/src/styles/splash.css">
+  <link rel="stylesheet" href="/src/styles/canvas.css">
+  <link rel="stylesheet" href="/src/styles/keyboard.css">
+  <link rel="stylesheet" href="/src/styles/cursor.css">
+  <link rel="stylesheet" href="/src/styles/calibration.css">
+</head>
+<body>
+  <!-- Accessible Skip Link -->
+  <a href="#main-content" class="skip-to-content">Skip to Main Content</a>
+
+  <!-- Screen Reader Live Announcements Region -->
+  <div id="sr-announcements" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- ========================================================================
+       1. OPENING / SPLASH SCREEN
+       ======================================================================== -->
+  <div id="splash-screen" role="dialog" aria-modal="true" aria-label="Loading Smart Gesture Canvas">
+    <div class="splash-content">
+      <div class="splash-logo-wrap">
+        <div class="splash-pulse-ring"></div>
+        <img src="/src/assets/logo.svg" alt="Smart Gesture Canvas Project Logo">
+      </div>
+      <h1 class="splash-title">Smart Gesture Canvas</h1>
+      <p class="splash-tagline">"Gesture-powered interaction for accessible computing."</p>
+
+      <div class="splash-progress-track" aria-hidden="true">
+        <div id="splash-progress-bar" class="splash-progress-bar"></div>
+      </div>
+      <span class="splash-status-text">Initializing Gesture Engine &amp; Mock Hardware Layer...</span>
+
+      <button id="splash-skip-btn" class="splash-skip-btn" type="button" aria-label="Skip splash screen and go to dashboard">
+        Skip to Dashboard [Enter]
+      </button>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       APPLICATION SHELL
+       ======================================================================== -->
+  <div id="app">
+    <!-- Header -->
+    <header class="app-header" role="banner">
+      <div class="header-inner">
+        <!-- Brand -->
+        <div class="brand-section" tabindex="0" role="button" aria-label="Return to Dashboard Overview">
+          <img src="/src/assets/logo.svg" alt="Smart Gesture Canvas Logo" class="brand-logo-img">
+          <div class="brand-text">
+            <h1>Smart Gesture Canvas</h1>
+            <span class="brand-tagline">Assistive Computing Platform</span>
+          </div>
+        </div>
+
+        <!-- Top Live Status Summary -->
+        <div class="header-status-strip" role="region" aria-label="Device and Gesture Status Summary">
+          <div class="demo-mode-badge" title="Running in simulated Demo Mode without physical hardware">
+            <span class="demo-pulse-dot"></span>
+            <span>DEMO MODE</span>
+          </div>
+
+          <!-- Connection Chip -->
+          <div class="status-chip" id="header-conn-chip" title="Hardware connection status">
+            <span id="header-conn-dot" class="status-dot connected"></span>
+            <span id="header-conn-text">Device Connected</span>
+          </div>
+
+          <!-- Battery Chip -->
+          <div class="status-chip" id="header-battery-chip" title="Hardware battery level">
+            <div class="battery-icon-wrap" style="width:38px;height:20px;border-width:2px;padding:2px;">
+              <div id="header-battery-bar" class="battery-level-bar state-high" style="width:87%;"></div>
+            </div>
+            <span id="header-battery-pct" style="font-weight:700;">87%</span>
+          </div>
+
+          <!-- Live Gesture Chip -->
+          <div class="status-chip" id="header-gesture-chip" title="Current detected gesture">
+            <span class="status-dot connected" style="background:#38bdf8;box-shadow:0 0 6px #38bdf8;"></span>
+            <span>Open Palm</span>
+            <span style="color:var(--text-muted);font-size:0.75rem;">(96%)</span>
+          </div>
+        </div>
+
+        <!-- Header Actions -->
+        <div class="header-actions">
+          <button id="btn-open-settings-modal" class="btn btn-secondary" type="button" aria-label="Open accessibility settings">
+            <span>⚙️</span>
+            <span>Accessibility</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Container -->
+    <main id="main-content" class="app-container" role="main">
+      <!-- Navigation Tabs -->
+      <nav class="main-nav" role="tablist" aria-label="Application Sections">
+        <button class="nav-tab-btn active" data-tab="overview" role="tab" aria-selected="true" id="tab-btn-overview">
+          <span class="tab-icon">🏠</span>
+          <span>Overview</span>
+        </button>
+        <button class="nav-tab-btn" data-tab="paint" role="tab" aria-selected="false" id="tab-btn-paint">
+          <span class="tab-icon">🎨</span>
+          <span>Paint &amp; Draw</span>
+        </button>
+        <button class="nav-tab-btn" data-tab="cursor" role="tab" aria-selected="false" id="tab-btn-cursor">
+          <span class="tab-icon">🖱️</span>
+          <span>Cursor Control</span>
+        </button>
+        <button class="nav-tab-btn" data-tab="keyboard" role="tab" aria-selected="false" id="tab-btn-keyboard">
+          <span class="tab-icon">⌨️</span>
+          <span>Virtual Keyboard</span>
+        </button>
+        <button class="nav-tab-btn" data-tab="device" role="tab" aria-selected="false" id="tab-btn-device">
+          <span class="tab-icon">⚡</span>
+          <span>Device &amp; Battery</span>
+        </button>
+        <button class="nav-tab-btn" data-tab="calibration" role="tab" aria-selected="false" id="tab-btn-calibration">
+          <span class="tab-icon">🎯</span>
+          <span>Calibration</span>
+        </button>
+        <button class="nav-tab-btn" data-tab="settings" role="tab" aria-selected="false" id="tab-btn-settings">
+          <span class="tab-icon">♿</span>
+          <span>Settings</span>
+        </button>
+      </nav>
+
+      <!-- ====================================================================
+           TAB 1: DASHBOARD OVERVIEW
+           ==================================================================== -->
+      <div id="view-overview" class="tab-view active-view" role="tabpanel" aria-labelledby="tab-btn-overview">
+        <!-- 4 Major Feature Cards -->
+        <section class="dashboard-grid" aria-label="Primary Features">
+          <!-- 1. Paint & Draw -->
+          <article class="card feature-card" data-nav-target="paint" tabindex="0" role="button" aria-label="Open Paint and Draw tool">
+            <div>
+              <div class="feature-card-icon-wrap" style="color:#06b6d4;">🎨</div>
+              <h3>Paint &amp; Draw</h3>
+              <p>Draw and express ideas freely on canvas using simulated hand gestures or touch/mouse.</p>
+            </div>
+            <div class="feature-card-footer">
+              <span>Open Canvas</span>
+              <span>→</span>
+            </div>
+          </article>
+
+          <!-- 2. Cursor Control -->
+          <article class="card feature-card" data-nav-target="cursor" tabindex="0" role="button" aria-label="Open Cursor Control arena">
+            <div>
+              <div class="feature-card-icon-wrap" style="color:#6366f1;">🖱️</div>
+              <h3>Cursor Control</h3>
+              <p>Move the pointer, test hover dwell, single/double click, and drag mode in the interactive arena.</p>
+            </div>
+            <div class="feature-card-footer">
+              <span>Test Cursor</span>
+              <span>→</span>
+            </div>
+          </article>
+
+          <!-- 3. Virtual Keyboard -->
+          <article class="card feature-card" data-nav-target="keyboard" tabindex="0" role="button" aria-label="Open Virtual Keyboard">
+            <div>
+              <div class="feature-card-icon-wrap" style="color:#8b5cf6;">⌨️</div>
+              <h3>Virtual Keyboard</h3>
+              <p>Type without a physical keyboard using high-contrast tactile keys, word predictions, and auto-scan.</p>
+            </div>
+            <div class="feature-card-footer">
+              <span>Open Keyboard</span>
+              <span>→</span>
+            </div>
+          </article>
+
+          <!-- 4. Calibration -->
+          <article class="card feature-card" data-nav-target="calibration" tabindex="0" role="button" aria-label="Open Device Calibration">
+            <div>
+              <div class="feature-card-icon-wrap" style="color:#10b981;">🎯</div>
+              <h3>Calibration</h3>
+              <p>Profile your optical matrix and 6-DoF sensor boundaries in a guided 4-step calibration wizard.</p>
+            </div>
+            <div class="feature-card-footer">
+              <span>Start Calibration</span>
+              <span>→</span>
+            </div>
+          </article>
+        </section>
+
+        <!-- Live Gesture Detection Panel & Device Status Row -->
+        <div class="dashboard-grid">
+          <!-- 7. Live Gesture Input -->
+          <section class="card gesture-monitor-card" id="live-gesture-monitor" aria-labelledby="live-gesture-heading">
+            <div class="card-header">
+              <h2 id="live-gesture-heading" class="card-title">
+                <span class="card-title-icon">✋</span>
+                <span>Live Gesture Input</span>
+              </h2>
+              <span class="card-badge" style="color:var(--accent-cyan-light);border-color:var(--accent-cyan-light);">120 Hz Telemetry</span>
+            </div>
+
+            <div class="gesture-viz-container">
+              <div class="hand-visualizer">
+                <div class="hand-radar-sweep"></div>
+                <div id="monitor-hand-icon" class="hand-icon-display">✋</div>
+              </div>
+
+              <div class="gesture-meta-grid">
+                <div class="meta-field">
+                  <span class="meta-label">Current Gesture</span>
+                  <span id="monitor-gesture-name" class="meta-value" style="color:var(--accent-cyan-light);">Open Palm</span>
+                </div>
+                <div class="meta-field">
+                  <span class="meta-label">Tracking State</span>
+                  <span id="monitor-tracking-state" class="meta-value" style="color:var(--color-success);">Active</span>
+                </div>
+                <div class="meta-field" style="grid-column: span 2;">
+                  <div style="display:flex;justify-content:space-between;">
+                    <span class="meta-label">Confidence Score</span>
+                    <span id="monitor-confidence-val" style="font-family:var(--font-mono);font-size:0.95rem;font-weight:700;color:#ffffff;">96%</span>
+                  </div>
+                  <div class="confidence-bar-bg">
+                    <div id="monitor-confidence-bar" class="confidence-bar-fill" style="width: 96%;"></div>
+                  </div>
+                </div>
+                <div class="meta-field">
+                  <span class="meta-label">Pitch Angle</span>
+                  <span id="monitor-imu-pitch" class="meta-value" style="font-family:var(--font-mono);font-size:1.05rem;">+2.1°</span>
+                </div>
+                <div class="meta-field">
+                  <span class="meta-label">Roll Angle</span>
+                  <span id="monitor-imu-roll" class="meta-value" style="font-family:var(--font-mono);font-size:1.05rem;">-1.4°</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 5 & 6. Device Connection & Battery Panel -->
+          <section class="card device-status-card" aria-labelledby="dev-status-heading">
+            <div class="card-header">
+              <h2 id="dev-status-heading" class="card-title">
+                <span class="card-title-icon">⚡</span>
+                <span>Device Connection &amp; Battery</span>
+              </h2>
+              <span id="card-battery-health" class="card-badge" style="color:var(--color-success);">Battery Optimal</span>
+            </div>
+
+            <!-- Battery Row -->
+            <div class="battery-display-row">
+              <div class="battery-icon-wrap">
+                <div id="card-battery-bar" class="battery-level-bar state-high" style="width:87%;"></div>
+              </div>
+              <div class="battery-text-info">
+                <div id="card-battery-pct" class="battery-percent-value">87%</div>
+                <div id="card-battery-estimate" class="battery-estimate-sub">Estimated Battery: 6h 24m</div>
+              </div>
+            </div>
+
+            <!-- Device Specs Details -->
+            <div class="device-details-grid">
+              <div class="device-detail-box">
+                <div class="meta-label">Device</div>
+                <div id="dev-name-val" style="font-weight:700;font-size:0.85rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Smart Gesture Controller</div>
+              </div>
+              <div class="device-detail-box">
+                <div class="meta-label">Status</div>
+                <div id="dev-status-val" style="font-weight:700;font-size:0.85rem;color:var(--color-success);">Connected</div>
+              </div>
+              <div class="device-detail-box">
+                <div class="meta-label">Signal</div>
+                <div id="dev-signal-val" style="font-weight:700;font-size:0.85rem;">Strong (-42 dBm)</div>
+              </div>
+              <div class="device-detail-box">
+                <div class="meta-label">Firmware</div>
+                <div id="dev-firmware-val" style="font-weight:700;font-size:0.85rem;">Demo v1.0.4</div>
+              </div>
+              <div class="device-detail-box" style="grid-column:span 2;">
+                <div class="meta-label">Input Source</div>
+                <div id="dev-input-val" style="font-weight:700;font-size:0.85rem;">Optical Gesture Matrix + 6-DoF IMU</div>
+              </div>
+            </div>
+
+            <!-- Interactive Hardware Actions -->
+            <div class="device-actions-row">
+              <button id="btn-dev-disconnect" class="btn btn-danger" type="button">Disconnect</button>
+              <button id="btn-dev-connect" class="btn btn-primary" type="button" style="display:none;">Connect Device</button>
+              <button id="btn-dev-reconnect" class="btn btn-secondary" type="button">Reconnect</button>
+              <button id="btn-dev-test" class="btn btn-secondary" type="button">
+                <span>⚡</span>
+                <span>Test Device</span>
+              </button>
+            </div>
+            <div id="dev-diagnostic-output" style="margin-top:0.75rem;"></div>
+          </section>
+        </div>
+
+        <!-- Activity History & User Profile Grid -->
+        <div class="dashboard-grid">
+          <!-- 14. Activity / Gesture History -->
+          <section class="card activity-card" aria-labelledby="activity-heading">
+            <div class="card-header">
+              <h2 id="activity-heading" class="card-title">
+                <span class="card-title-icon">📜</span>
+                <span>Activity &amp; Gesture History</span>
+              </h2>
+              <button id="btn-clear-activity" class="btn btn-secondary" style="padding:0.35rem 0.75rem;font-size:0.8rem;" type="button">Clear</button>
+            </div>
+
+            <div class="activity-filter-bar" role="group" aria-label="Filter activity history">
+              <button class="filter-chip active" data-filter="all" type="button">All Events</button>
+              <button class="filter-chip" data-filter="gesture" type="button">Gestures</button>
+              <button class="filter-chip" data-filter="system" type="button">System</button>
+              <button class="filter-chip" data-filter="diagnostic" type="button">Diagnostics</button>
+            </div>
+
+            <div id="activity-event-list" class="activity-list" role="log" aria-live="polite">
+              <!-- Dynamically rendered activity items -->
+            </div>
+          </section>
+
+          <!-- 15. Personalized User Profile -->
+          <section class="card profile-card" aria-labelledby="profile-heading">
+            <div class="card-header">
+              <h2 id="profile-heading" class="card-title">
+                <span class="card-title-icon">👤</span>
+                <span>User Profile &amp; Presets</span>
+              </h2>
+              <span class="card-badge">Assistive Preferences</span>
+            </div>
+
+            <p style="font-size:0.88rem;color:var(--text-secondary);margin-bottom:1rem;">
+              Personalized accessibility profile tailored for your motor interaction preferences.
+            </p>
+
+            <div style="margin-bottom:1rem;">
+              <label for="profile-preset-select" class="meta-label" style="display:block;margin-bottom:0.4rem;">Quick Accessibility Preset</label>
+              <select id="profile-preset-select" class="accessible-select" style="width:100%;">
+                <option value="standard">Standard Assistive Profile</option>
+                <option value="tremor">Tremor Compensation Profile</option>
+                <option value="scanning">Single-Gesture Scanning Profile</option>
+              </select>
+            </div>
+
+            <div class="profile-preset-list">
+              <div class="profile-row">
+                <span class="profile-row-label">Interaction Mode</span>
+                <span id="profile-mode-val" class="profile-row-val">Gesture Control</span>
+              </div>
+              <div class="profile-row">
+                <span class="profile-row-label">Preferred Interface Size</span>
+                <span id="profile-size-val" class="profile-row-val">Medium</span>
+              </div>
+              <div class="profile-row">
+                <span class="profile-row-label">Gesture Sensitivity</span>
+                <span id="profile-sens-val" class="profile-row-val">Medium</span>
+              </div>
+              <div class="profile-row">
+                <span class="profile-row-label">Keyboard Size</span>
+                <span id="profile-kbsize-val" class="profile-row-val">Large</span>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <!-- ====================================================================
+           TAB 2: PAINT & DRAW CANVAS
+           ==================================================================== -->
+      <div id="view-paint" class="tab-view" role="tabpanel" aria-labelledby="tab-btn-paint">
+        <div class="paint-view-container">
+          <!-- Canvas Top Toolbar -->
+          <div class="canvas-toolbar" role="toolbar" aria-label="Drawing Canvas Tools">
+            <!-- Tools Group -->
+            <div class="toolbar-group">
+              <button id="tool-brush" class="tool-btn active" type="button" aria-pressed="true">
+                <span>🖌️</span>
+                <span>Brush</span>
+              </button>
+              <button id="tool-eraser" class="tool-btn" type="button" aria-pressed="false">
+                <span>🧹</span>
+                <span>Eraser</span>
+              </button>
+            </div>
+
+            <!-- Brush Size Slider -->
+            <div class="toolbar-group brush-size-control">
+              <label for="brush-size-slider">Size:</label>
+              <span id="brush-preview-dot" class="brush-preview-dot"></span>
+              <input id="brush-size-slider" type="range" min="2" max="48" value="8" class="accessible-slider" style="width:110px;">
+              <span id="brush-size-val" style="font-family:var(--font-mono);font-size:0.85rem;font-weight:700;">8px</span>
+            </div>
+
+            <!-- Color Palette Swatches -->
+            <div class="toolbar-group color-swatches-group" role="radiogroup" aria-label="Color Palette">
+              <button class="color-swatch-btn active" data-color="#6366f1" style="background:#6366f1;" aria-label="Indigo"></button>
+              <button class="color-swatch-btn" data-color="#06b6d4" style="background:#06b6d4;" aria-label="Cyan"></button>
+              <button class="color-swatch-btn" data-color="#10b981" style="background:#10b981;" aria-label="Green"></button>
+              <button class="color-swatch-btn" data-color="#f59e0b" style="background:#f59e0b;" aria-label="Amber"></button>
+              <button class="color-swatch-btn" data-color="#ef4444" style="background:#ef4444;" aria-label="Red"></button>
+              <button class="color-swatch-btn" data-color="#ec4899" style="background:#ec4899;" aria-label="Pink"></button>
+              <button class="color-swatch-btn" data-color="#090d16" style="background:#090d16;border-color:var(--border-subtle);" aria-label="Black"></button>
+
+              <div class="custom-color-picker-wrap" title="Custom color picker">
+                <input type="color" id="custom-color-input" value="#6366f1" aria-label="Custom color picker">
+              </div>
+            </div>
+
+            <!-- Actions Group -->
+            <div class="toolbar-group">
+              <button id="btn-canvas-undo" class="tool-btn" type="button" title="Undo last stroke">
+                <span>↩️</span>
+                <span>Undo</span>
+              </button>
+              <button id="btn-canvas-redo" class="tool-btn" type="button" title="Redo stroke">
+                <span>↪️</span>
+                <span>Redo</span>
+              </button>
+              <button id="btn-canvas-clear" class="tool-btn" type="button">
+                <span>🗑️</span>
+                <span>Clear</span>
+              </button>
+              <button id="btn-canvas-reset" class="tool-btn" type="button">
+                <span>🔄</span>
+                <span>Reset</span>
+              </button>
+              <button id="btn-canvas-save" class="btn btn-primary" style="padding:0.55rem 1.15rem;font-size:0.88rem;" type="button">
+                <span>💾</span>
+                <span>Save Image</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Canvas Stage Area -->
+          <div class="canvas-main-stage">
+            <canvas id="drawing-canvas"></canvas>
+
+            <!-- Gesture HUD overlay -->
+            <div class="gesture-canvas-hud">
+              <div class="gesture-status-indicator">
+                <span class="status-dot connected"></span>
+                <span>Gesture Status: Active</span>
+              </div>
+              <span style="opacity:0.3;">|</span>
+              <span id="canvas-hud-gesture" style="font-family:var(--font-mono);font-weight:600;">Open Palm (96%)</span>
+            </div>
+
+            <!-- Simulated Gesture Hand Cursor Reticle -->
+            <div id="gesture-hand-reticle">
+              <div class="reticle-ring"></div>
+              <div class="reticle-core"></div>
+            </div>
+          </div>
+
+          <!-- Bottom Gesture Guide Strip -->
+          <div class="canvas-bottom-strip">
+            <div class="gesture-guide-chips">
+              <span style="font-weight:700;">Gesture Controls:</span>
+              <div class="gesture-guide-chip"><strong>✋ Open Palm:</strong> Hover Reticle</div>
+              <div class="gesture-guide-chip"><strong>🤏 Pinch:</strong> Draw Stroke</div>
+              <div class="gesture-guide-chip"><strong>✊ Fist:</strong> Stop / Lift Brush</div>
+              <div class="gesture-guide-chip"><strong>👉 Swipe:</strong> Pan View</div>
+            </div>
+            <div>
+              <button id="btn-toggle-gesture-draw" class="btn btn-secondary" style="padding:0.4rem 0.85rem;font-size:0.82rem;" type="button">
+                Gesture Mode: ON
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ====================================================================
+           TAB 3: CURSOR CONTROL ARENA
+           ==================================================================== -->
+      <div id="view-cursor" class="tab-view" role="tabpanel" aria-labelledby="tab-btn-cursor">
+        <div class="cursor-view-container">
+          <!-- Top HUD -->
+          <div class="cursor-control-hud">
+            <div class="cursor-telemetry-badge">
+              <div class="hud-item">
+                <span class="label">Simulated Position</span>
+                <span id="cursor-hud-coords" class="value" style="font-family:var(--font-mono);">X: 420, Y: 280</span>
+              </div>
+              <div class="hud-item">
+                <span class="label">Detected Gesture</span>
+                <span id="cursor-hud-gesture" class="value" style="color:var(--accent-cyan-light);">Move</span>
+              </div>
+              <div class="hud-item">
+                <span class="label">Confidence</span>
+                <span id="cursor-hud-confidence" class="value" style="font-family:var(--font-mono);color:var(--color-success);">94%</span>
+              </div>
+              <div class="hud-item">
+                <span class="label">Active Mode</span>
+                <span id="cursor-hud-mode" class="value">Click</span>
+              </div>
+            </div>
+
+            <!-- Mode Selector Buttons -->
+            <div class="cursor-modes-selector" role="radiogroup" aria-label="Cursor Action Mode">
+              <button class="cursor-mode-btn active" data-mode="Click" type="button">Click</button>
+              <button class="cursor-mode-btn" data-mode="Double Click" type="button">Double Click</button>
+              <button class="cursor-mode-btn" data-mode="Drag" type="button">Drag Mode</button>
+              <button class="cursor-mode-btn" data-mode="Scroll" type="button">Scroll Mode</button>
+            </div>
+          </div>
+
+          <!-- Interactive Cursor Arena -->
+          <div id="cursor-control-arena" class="cursor-arena">
+            <div class="arena-grid-lines"></div>
+            <div class="arena-center-mark"></div>
+
+            <!-- Simulated Cursor Element -->
+            <div id="simulated-cursor">
+              <div class="sim-cursor-pointer">
+                <div class="sim-cursor-ripple"></div>
+                <div class="sim-cursor-dot"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Settings Strip (Sensitivity & Speed Controls) -->
+          <div class="cursor-settings-strip">
+            <div class="slider-control-group">
+              <div class="slider-header">
+                <span>Gesture Sensitivity</span>
+                <span id="cursor-sens-val" style="color:var(--accent-cyan-light);font-family:var(--font-mono);">Medium</span>
+              </div>
+              <input id="cursor-sens-slider" type="range" min="1" max="3" value="2" class="accessible-slider" aria-label="Gesture Sensitivity">
+            </div>
+
+            <div class="slider-control-group">
+              <div class="slider-header">
+                <span>Cursor Tracking Speed</span>
+                <span id="cursor-speed-val" style="color:var(--accent-cyan-light);font-family:var(--font-mono);">1.0x</span>
+              </div>
+              <input id="cursor-speed-slider" type="range" min="0.5" max="2.5" step="0.1" value="1.0" class="accessible-slider" aria-label="Cursor Speed">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ====================================================================
+           TAB 4: VIRTUAL KEYBOARD
+           ==================================================================== -->
+      <div id="view-keyboard" class="tab-view" role="tabpanel" aria-labelledby="tab-btn-keyboard">
+        <div class="keyboard-view-container">
+          <!-- Text Output Preview Card -->
+          <div class="keyboard-output-card">
+            <div class="text-preview-header">
+              <span class="text-preview-label">
+                <span>📝</span>
+                <span>Text Preview</span>
+                <span id="kb-char-count" style="color:var(--text-muted);font-size:0.75rem;font-weight:500;">0 chars</span>
+              </span>
+              <div class="text-action-group">
+                <button id="btn-kb-speak" class="btn btn-secondary" style="padding:0.45rem 0.9rem;font-size:0.85rem;" type="button">
+                  <span>🔊</span>
+                  <span>Speak Text</span>
+                </button>
+                <button id="btn-kb-copy" class="btn btn-secondary" style="padding:0.45rem 0.9rem;font-size:0.85rem;" type="button">
+                  <span>📋</span>
+                  <span>Copy</span>
+                </button>
+                <button id="btn-kb-clear" class="btn btn-secondary" style="padding:0.45rem 0.9rem;font-size:0.85rem;" type="button">
+                  <span>🗑️</span>
+                  <span>Clear</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Display Area -->
+            <div id="kb-text-output" class="keyboard-text-display" tabindex="0" role="textbox" aria-multiline="true" aria-label="Virtual keyboard typed text">
+              <span class="keyboard-caret"></span>
+            </div>
+
+            <!-- Predictive Word Chips -->
+            <div class="prediction-bar" role="toolbar" aria-label="Quick word predictions">
+              <span style="font-size:0.78rem;color:var(--text-muted);font-weight:700;margin-right:0.4rem;">PREDICT:</span>
+              <button class="prediction-chip" data-word="Hello" type="button">Hello</button>
+              <button class="prediction-chip" data-word="Thank you" type="button">Thank you</button>
+              <button class="prediction-chip" data-word="Yes" type="button">Yes</button>
+              <button class="prediction-chip" data-word="No" type="button">No</button>
+              <button class="prediction-chip" data-word="Please help" type="button">Please help</button>
+              <button class="prediction-chip" data-word="I need water" type="button">I need water</button>
+              <button class="prediction-chip" data-word="Goodbye" type="button">Goodbye</button>
+            </div>
+          </div>
+
+          <!-- Controls: Key Size & Scan Mode -->
+          <div class="keyboard-controls-row">
+            <div class="keyboard-mode-toggles">
+              <div style="display:flex;align-items:center;gap:0.6rem;">
+                <label for="kb-size-select" style="font-size:0.9rem;font-weight:600;color:var(--text-secondary);">Key Size:</label>
+                <select id="kb-size-select" class="accessible-select">
+                  <option value="small">Small</option>
+                  <option value="medium">Medium</option>
+                  <option value="large" selected>Large (Accessibility)</option>
+                </select>
+              </div>
+
+              <div style="display:flex;align-items:center;gap:0.6rem;">
+                <label class="toggle-switch">
+                  <input type="checkbox" id="kb-scan-toggle">
+                  <span class="toggle-slider"></span>
+                </label>
+                <span style="font-size:0.9rem;font-weight:600;color:var(--text-secondary);">Keyboard Scan Mode</span>
+              </div>
+            </div>
+
+            <span style="font-size:0.8rem;color:var(--text-muted);">
+              Press Spacebar, Enter, or Click to select scanned key
+            </span>
+          </div>
+
+          <!-- Scan Mode Indicator Banner -->
+          <div id="kb-scan-banner" class="scan-status-banner" style="display:none;">
+            <span>⚡ <strong>Keyboard Scan Active:</strong> Keys are cycling automatically. Trigger a Pinch, Click, or press Spacebar to type the highlighted key.</span>
+          </div>
+
+          <!-- Keyboard Grid Board -->
+          <div id="virtual-kb-board" class="virtual-keyboard-board size-large" role="group" aria-label="On-screen virtual keyboard">
+            <!-- Keys generated dynamically by VirtualKeyboard.js -->
+          </div>
+        </div>
+      </div>
+
+      <!-- ====================================================================
+           TAB 5: DEVICE & BATTERY TELEMETRY
+           ==================================================================== -->
+      <div id="view-device" class="tab-view" role="tabpanel" aria-labelledby="tab-btn-device">
+        <div style="max-width:960px;margin:0 auto;display:flex;flex-direction:column;gap:1.5rem;">
+          <section class="card" aria-labelledby="hw-telemetry-heading">
+            <div class="card-header">
+              <h2 id="hw-telemetry-heading" class="card-title">
+                <span class="card-title-icon">📡</span>
+                <span>Hardware Sensor Telemetry &amp; Battery Diagnostics</span>
+              </h2>
+              <span class="demo-mode-badge">
+                <span class="demo-pulse-dot"></span>
+                <span>Simulated Layer</span>
+              </span>
+            </div>
+
+            <p style="color:var(--text-secondary);font-size:0.92rem;margin-bottom:1.5rem;line-height:1.6;">
+              This diagnostic screen displays full live telemetry from the Smart Gesture controller.
+              In future releases, the hardware engineer will stream physical Bluetooth GATT characteristics,
+              USB-Serial frames, or WebSockets directly into this abstraction layer.
+            </p>
+
+            <div class="dashboard-grid" style="margin-bottom:1.5rem;">
+              <div class="card" style="grid-column:span 6;background:var(--bg-surface-elevated);">
+                <h3 style="font-size:1.05rem;margin-bottom:1rem;color:var(--accent-cyan-light);">Battery Performance</h3>
+                <div style="font-size:2.2rem;font-weight:800;font-family:var(--font-display);margin-bottom:0.3rem;">87%</div>
+                <div style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:1rem;">Estimated Runtime Remaining: 6 hours 24 minutes</div>
+                <div style="display:flex;flex-direction:column;gap:0.4rem;font-size:0.85rem;color:var(--text-muted);">
+                  <div style="display:flex;justify-content:space-between;"><span>Cell Voltage:</span><span style="color:#ffffff;font-family:var(--font-mono);">3.92 V</span></div>
+                  <div style="display:flex;justify-content:space-between;"><span>Operating Temp:</span><span style="color:#ffffff;font-family:var(--font-mono);">28.4 °C</span></div>
+                  <div style="display:flex;justify-content:space-between;"><span>Battery Health:</span><span style="color:var(--color-success);font-weight:700;">Optimal (98%)</span></div>
+                </div>
+              </div>
+
+              <div class="card" style="grid-column:span 6;background:var(--bg-surface-elevated);">
+                <h3 style="font-size:1.05rem;margin-bottom:1rem;color:var(--accent-indigo);">Radio &amp; Sensor Array</h3>
+                <div style="display:flex;flex-direction:column;gap:0.6rem;font-size:0.88rem;">
+                  <div style="display:flex;justify-content:space-between;"><span>Signal Strength:</span><span style="color:var(--color-success);font-weight:700;">-42 dBm (Strong)</span></div>
+                  <div style="display:flex;justify-content:space-between;"><span>Roundtrip Ping Latency:</span><span style="color:#ffffff;font-family:var(--font-mono);">14 ms</span></div>
+                  <div style="display:flex;justify-content:space-between;"><span>Sampling Rate:</span><span style="color:#ffffff;font-family:var(--font-mono);">120 Hz</span></div>
+                  <div style="display:flex;justify-content:space-between;"><span>Optical Sensor Matrix:</span><span style="color:#ffffff;">64-Pixel IR Array</span></div>
+                  <div style="display:flex;justify-content:space-between;"><span>IMU Orientation:</span><span style="color:#ffffff;">6-DoF Gyro + Accelerometer</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div style="display:flex;gap:1rem;flex-wrap:wrap;">
+              <button class="btn btn-secondary" onclick="alert('Simulation ping sent: 12ms latency OK')">
+                <span>🔄</span>
+                <span>Send Hardware Ping</span>
+              </button>
+              <button class="btn btn-secondary" onclick="alert('Sensor matrices zeroed successfully.')">
+                <span>🎯</span>
+                <span>Recalibrate Gyro Zero-Point</span>
+              </button>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <!-- ====================================================================
+           TAB 6: CALIBRATION WIZARD
+           ==================================================================== -->
+      <div id="view-calibration" class="tab-view" role="tabpanel" aria-labelledby="tab-btn-calibration">
+        <div class="calibration-view-container" id="calibration-wizard-root">
+          <div class="calibration-card">
+            <!-- Step Tracker -->
+            <div class="calibration-steps-tracker" role="progressbar" aria-valuenow="1" aria-valuemin="1" aria-valuemax="4">
+              <div class="step-bubble active" data-step="1">1</div>
+              <div class="step-bubble" data-step="2">2</div>
+              <div class="step-bubble" data-step="3">3</div>
+              <div class="step-bubble" data-step="4">4</div>
+            </div>
+
+            <!-- Stage Presentation -->
+            <div class="step-stage-content">
+              <div class="step-visual-zone">
+                <span id="calib-icon-display" class="step-icon-large">✋</span>
+              </div>
+
+              <div id="calib-step-tag" class="step-number-tag">Calibration 1 of 4</div>
+              <h2 id="calib-headline" class="step-headline">Rest in Neutral Position</h2>
+              <p id="calib-detail" class="step-detail-text">
+                Hold your hand 15–20 cm above the optical gesture sensor in a relaxed open posture.
+                The optical matrix will calibrate ambient light and zero-offset baseline.
+              </p>
+
+              <!-- Progress Meter -->
+              <div class="step-meter-container">
+                <div class="meter-track">
+                  <div id="calib-meter-fill" class="meter-fill" style="width: 25%;"></div>
+                </div>
+                <div id="calib-meter-text" style="font-size:0.8rem;color:var(--text-muted);font-family:var(--font-mono);">
+                  25% Completed
+                </div>
+              </div>
+
+              <!-- Action Footer -->
+              <div class="step-actions-footer">
+                <button id="btn-calib-restart" class="btn btn-secondary" type="button">Restart</button>
+                <button id="btn-calib-next" class="btn btn-primary" type="button">Confirm Neutral Position →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ====================================================================
+           TAB 7: ACCESSIBILITY & SETTINGS
+           ==================================================================== -->
+      <div id="view-settings" class="tab-view" role="tabpanel" aria-labelledby="tab-btn-settings">
+        <div style="max-width:800px;margin:0 auto;">
+          <section class="card" aria-labelledby="a11y-settings-heading">
+            <div class="card-header">
+              <h2 id="a11y-settings-heading" class="card-title">
+                <span class="card-title-icon">♿</span>
+                <span>Accessibility &amp; Assistive Preferences</span>
+              </h2>
+            </div>
+
+            <div class="modal-body" style="margin-bottom:0;">
+              <div class="setting-row">
+                <div class="setting-info">
+                  <h4>Interface Scale</h4>
+                  <p>Increase overall font and layout scale for enhanced readability</p>
+                </div>
+                <select id="setting-ui-scale" class="accessible-select">
+                  <option value="small">Small (88%)</option>
+                  <option value="medium" selected>Medium (100% Default)</option>
+                  <option value="large">Large (116%)</option>
+                </select>
+              </div>
+
+              <div class="setting-row">
+                <div class="setting-info">
+                  <h4>High Contrast Mode</h4>
+                  <p>Maximize visual contrast with ultra-crisp borders and text</p>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="setting-high-contrast">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+
+              <div class="setting-row">
+                <div class="setting-info">
+                  <h4>Reduced Motion</h4>
+                  <p>Disable non-essential animations and transitions</p>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="setting-reduced-motion">
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+
+              <div class="setting-row">
+                <div class="setting-info">
+                  <h4>Button Size</h4>
+                  <p>Enlarge interactive touch and click targets</p>
+                </div>
+                <select id="setting-btn-size" class="accessible-select">
+                  <option value="normal" selected>Normal</option>
+                  <option value="large">Large (+30%)</option>
+                  <option value="extra-large">Extra Large (+60%)</option>
+                </select>
+              </div>
+
+              <div class="setting-row">
+                <div class="setting-info">
+                  <h4>Gesture Sensitivity</h4>
+                  <p>Tune gesture trigger threshold for motor control ease</p>
+                </div>
+                <select id="setting-gesture-sensitivity" class="accessible-select">
+                  <option value="low">Low (High Stability)</option>
+                  <option value="medium" selected>Medium (Balanced)</option>
+                  <option value="high">High (Minimal Effort)</option>
+                </select>
+              </div>
+
+              <div class="setting-row">
+                <div class="setting-info">
+                  <h4>Sound Feedback</h4>
+                  <p>Play gentle audio clicks and chimes upon interaction</p>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="setting-sound-feedback" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+
+              <div class="setting-row" style="border-bottom:none;">
+                <div class="setting-info">
+                  <h4>Speech Synthesis</h4>
+                  <p>Enable text-to-speech reading for keyboard text preview</p>
+                </div>
+                <label class="toggle-switch">
+                  <input type="checkbox" id="setting-speech-feedback" checked>
+                  <span class="toggle-slider"></span>
+                </label>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <!-- ======================================================================
+         NATIVE ACCESSIBLE DIALOG MODAL (Accessible from Header)
+         ====================================================================== -->
+    <dialog id="accessibility-modal" class="accessible-modal" aria-labelledby="modal-settings-title">
+      <div class="modal-header">
+        <h2 id="modal-settings-title">Accessibility Quick Settings</h2>
+        <button id="btn-close-settings-modal" class="btn btn-secondary btn-icon-only" type="button" aria-label="Close dialog">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <p style="font-size:0.88rem;color:var(--text-secondary);">
+          Adjust preferences dynamically. Changes take effect immediately across all screens.
+        </p>
+
+        <div class="setting-row">
+          <div class="setting-info">
+            <h4>Quick High Contrast</h4>
+            <p>High-visibility color palette</p>
+          </div>
+          <button class="btn btn-secondary" onclick="document.body.classList.toggle('theme-high-contrast')">Toggle Contrast</button>
+        </div>
+
+        <div class="setting-row">
+          <div class="setting-info">
+            <h4>Interface Scale</h4>
+            <p>Adjust zoom size</p>
+          </div>
+          <div style="display:flex;gap:0.4rem;">
+            <button class="btn btn-secondary" onclick="document.documentElement.style.setProperty('--ui-scale', '0.88')">A-</button>
+            <button class="btn btn-secondary" onclick="document.documentElement.style.setProperty('--ui-scale', '1')">A</button>
+            <button class="btn btn-secondary" onclick="document.documentElement.style.setProperty('--ui-scale', '1.16')">A+</button>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;">
+        <button class="btn btn-primary" onclick="document.getElementById('accessibility-modal').close()">Done</button>
+      </div>
+    </dialog>
+
+    <!-- ======================================================================
+         DEMO DIRECTOR FLOATING TOOLBAR (Presenter Controls)
+         ====================================================================== -->
+    <aside id="demo-director-bar" class="demo-director-bar" aria-label="Demo Director Simulation Controls">
+      <span class="director-title">🎬 Demo Director:</span>
+
+      <div class="director-btn-group">
+        <button class="director-btn director-gesture-btn" data-gesture="Open Palm" type="button">✋ Open Palm</button>
+        <button class="director-btn director-gesture-btn" data-gesture="Pinch" type="button">🤏 Pinch</button>
+        <button class="director-btn director-gesture-btn" data-gesture="Fist" type="button">✊ Fist</button>
+        <button class="director-btn director-gesture-btn" data-gesture="Point" type="button">👉 Point</button>
+        <button class="director-btn director-gesture-btn" data-gesture="Swipe Left" type="button">👈 Swipe L</button>
+        <button class="director-btn director-gesture-btn" data-gesture="Swipe Right" type="button">👉 Swipe R</button>
+        <button class="director-btn director-gesture-btn" data-gesture="Double Tap" type="button">✌️ Double Tap</button>
+        <button class="director-btn director-gesture-btn" data-gesture="Click" type="button">👆 Click</button>
+      </div>
+
+      <span style="opacity:0.3;color:var(--text-muted);">|</span>
+
+      <div class="director-btn-group">
+        <button id="btn-director-batt-85" class="director-btn" type="button" title="Set Battery to 87%">🔋 87%</button>
+        <button id="btn-director-batt-15" class="director-btn" type="button" title="Set Battery to 15% (Critical warning test)">🪫 15%</button>
+      </div>
+
+      <span style="opacity:0.3;color:var(--text-muted);">|</span>
+
+      <button id="btn-director-toggle-auto" class="director-btn active" type="button">Simulation: Auto (ON)</button>
+    </aside>
+  </div>
+
+  <!-- JavaScript Entry Point -->
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

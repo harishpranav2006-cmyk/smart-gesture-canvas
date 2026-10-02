@@ -1,0 +1,244 @@
+/* ==========================================================================
+   SMART GESTURE CANVAS - PAINT & DRAW TOOL STYLES
+   ========================================================================== */
+
+.paint-view-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* Canvas Toolbar */
+.canvas-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 0.85rem 1.25rem;
+}
+
+.toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.tool-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.tool-btn:hover {
+  background: var(--bg-surface-hover);
+  color: var(--text-primary);
+  border-color: var(--border-medium);
+}
+
+.tool-btn.active {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(6, 182, 212, 0.25));
+  border-color: var(--border-focus);
+  color: #ffffff;
+  box-shadow: 0 0 12px rgba(99, 102, 241, 0.3);
+}
+
+/* Color Palette Swatches */
+.color-swatches-group {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.color-swatch-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform var(--transition-fast), border-color var(--transition-fast);
+  padding: 0;
+}
+
+.color-swatch-btn:hover {
+  transform: scale(1.15);
+}
+
+.color-swatch-btn.active {
+  border-color: #ffffff;
+  transform: scale(1.2);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.custom-color-picker-wrap {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid var(--border-subtle);
+  cursor: pointer;
+}
+
+.custom-color-picker-wrap input[type="color"] {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  width: 52px;
+  height: 52px;
+  border: none;
+  cursor: pointer;
+}
+
+/* Brush Size Slider */
+.brush-size-control {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.brush-preview-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--text-primary);
+  display: inline-block;
+  transition: width 150ms ease, height 150ms ease;
+}
+
+/* Canvas Area Container */
+.canvas-main-stage {
+  position: relative;
+  width: 100%;
+  height: 580px;
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  border: 2px solid var(--border-medium);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  cursor: crosshair;
+}
+
+#drawing-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Gesture Overlay Indicator on Canvas */
+.gesture-canvas-hud {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--border-medium);
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-full);
+  color: #ffffff;
+  font-size: 0.85rem;
+  box-shadow: var(--shadow-sm);
+  pointer-events: none;
+}
+
+.gesture-status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 700;
+  color: var(--accent-cyan-light);
+}
+
+/* Simulated Gesture Hand Cursor Overlay */
+#gesture-hand-reticle {
+  position: absolute;
+  width: 36px;
+  height: 36px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: width 100ms ease, height 100ms ease;
+}
+
+.reticle-ring {
+  position: absolute;
+  inset: 0;
+  border: 2px solid var(--accent-indigo);
+  border-radius: 50%;
+  animation: pulse-reticle 1.5s infinite;
+}
+
+.reticle-core {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-cyan);
+}
+
+.reticle-pinch {
+  border-color: var(--color-danger);
+  transform: scale(0.7);
+}
+
+@keyframes pulse-reticle {
+  0% { transform: scale(0.9); opacity: 0.8; }
+  50% { transform: scale(1.2); opacity: 0.3; }
+  100% { transform: scale(0.9); opacity: 0.8; }
+}
+
+/* Canvas Footer Bar */
+.canvas-bottom-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1.25rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.gesture-guide-chips {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.gesture-guide-chip {
+  padding: 0.25rem 0.65rem;
+  background: var(--bg-surface-elevated);
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  border: 1px solid var(--border-subtle);
+}
+
+.gesture-guide-chip strong {
+  color: var(--accent-cyan-light);
+}

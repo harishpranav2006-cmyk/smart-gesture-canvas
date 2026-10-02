@@ -1,0 +1,705 @@
+/* ==========================================================================
+   SMART GESTURE CANVAS - REUSABLE ACCESSIBLE COMPONENTS
+   ========================================================================== */
+
+/* Button Components */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: var(--btn-padding-y) var(--btn-padding-x);
+  font-family: var(--font-display);
+  font-size: var(--btn-font-size);
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-decoration: none;
+  line-height: 1.2;
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent-indigo), var(--accent-cyan));
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #4f46e5, #0891b2);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.5);
+}
+
+.btn-secondary {
+  background: var(--bg-surface-elevated);
+  border-color: var(--border-medium);
+  color: var(--text-primary);
+}
+
+.btn-secondary:hover {
+  background: var(--bg-surface-hover);
+  border-color: var(--border-focus);
+}
+
+.btn-danger {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #fca5a5;
+}
+
+.btn-danger:hover {
+  background: var(--color-danger);
+  color: #ffffff;
+}
+
+.btn-icon-only {
+  padding: 0.65rem;
+  border-radius: var(--radius-md);
+  aspect-ratio: 1 / 1;
+}
+
+/* Accessible Card System */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-fast), border-color var(--transition-fast);
+}
+
+.card:hover {
+  border-color: var(--border-medium);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.card-title-icon {
+  font-size: 1.35rem;
+}
+
+.card-badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--radius-full);
+  background: var(--bg-surface-elevated);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+}
+
+/* Feature Hero Cards (Draw, Cursor, Keyboard, Calibrate) */
+.feature-card {
+  grid-column: span 3;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1.75rem 1.5rem;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--border-medium);
+  background: linear-gradient(180deg, var(--bg-surface) 0%, rgba(30, 41, 66, 0.8) 100%);
+}
+
+.feature-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--accent-cyan), var(--accent-indigo));
+  opacity: 0.8;
+}
+
+.feature-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg), var(--glow-indigo);
+  border-color: var(--border-focus);
+}
+
+.feature-card-icon-wrap {
+  width: 54px;
+  height: 54px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(6, 182, 212, 0.2));
+  border: 1px solid var(--border-medium);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.85rem;
+  margin-bottom: 1.25rem;
+}
+
+.feature-card h3 {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+  color: var(--text-primary);
+}
+
+.feature-card p {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+  line-height: 1.4;
+}
+
+.feature-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--accent-cyan-light);
+  transition: all var(--transition-fast);
+}
+
+.feature-card:hover .feature-card-footer {
+  color: #fff;
+  text-shadow: 0 0 8px var(--accent-cyan);
+}
+
+.feature-card-footer span:last-child {
+  transition: transform var(--transition-fast);
+}
+
+.feature-card:hover .feature-card-footer span:last-child {
+  transform: translateX(4px);
+}
+
+/* ==========================================================================
+   LIVE GESTURE MONITOR WIDGET
+   ========================================================================== */
+.gesture-monitor-card {
+  grid-column: span 6;
+}
+
+.gesture-viz-container {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+}
+
+.hand-visualizer {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+  border-radius: 50%;
+  border: 1px solid var(--border-medium);
+}
+
+.hand-radar-sweep {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 2px dashed rgba(56, 189, 248, 0.4);
+  animation: radar-spin 8s linear infinite;
+}
+
+@keyframes radar-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.hand-icon-display {
+  font-size: 4rem;
+  filter: drop-shadow(0 0 12px var(--accent-cyan-light));
+  transition: transform 200ms ease;
+}
+
+.gesture-meta-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.meta-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.meta-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.meta-value {
+  font-size: 1.2rem;
+  font-weight: 700;
+  font-family: var(--font-display);
+  color: var(--text-primary);
+}
+
+.confidence-bar-bg {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-top: 0.4rem;
+}
+
+.confidence-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-cyan), var(--color-success));
+  border-radius: var(--radius-full);
+  transition: width 300ms ease;
+}
+
+/* ==========================================================================
+   BATTERY WIDGET & DEVICE STATUS
+   ========================================================================== */
+.device-status-card {
+  grid-column: span 6;
+}
+
+.battery-display-row {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1.15rem 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.battery-icon-wrap {
+  width: 68px;
+  height: 36px;
+  border: 3px solid #94a3b8;
+  border-radius: 6px;
+  padding: 3px;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.battery-icon-wrap::after {
+  content: '';
+  position: absolute;
+  right: -8px;
+  top: 9px;
+  width: 5px;
+  height: 14px;
+  background: #94a3b8;
+  border-radius: 0 3px 3px 0;
+}
+
+.battery-level-bar {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 400ms ease, background-color 300ms ease;
+}
+
+/* Battery percentage styling */
+.battery-level-bar.state-high { background-color: var(--color-success); }
+.battery-level-bar.state-mid { background-color: var(--color-warning); }
+.battery-level-bar.state-low { background-color: #f97316; }
+.battery-level-bar.state-critical { background-color: var(--color-danger); animation: battery-blink 1s infinite; }
+
+@keyframes battery-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.battery-text-info {
+  flex: 1;
+}
+
+.battery-percent-value {
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.battery-estimate-sub {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.device-details-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.85rem;
+  margin-bottom: 1.25rem;
+}
+
+.device-detail-box {
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 0.65rem 0.85rem;
+}
+
+.device-actions-row {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+/* ==========================================================================
+   ACTIVITY HISTORY LOG
+   ========================================================================== */
+.activity-card {
+  grid-column: span 7;
+}
+
+.activity-filter-bar {
+  display: flex;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+}
+
+.filter-chip {
+  padding: 0.3rem 0.75rem;
+  border-radius: var(--radius-full);
+  font-size: 0.8rem;
+  font-weight: 600;
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.filter-chip.active, .filter-chip:hover {
+  background: var(--accent-indigo);
+  color: #ffffff;
+  border-color: var(--accent-indigo);
+}
+
+.activity-list {
+  max-height: 250px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-right: 0.4rem;
+}
+
+.activity-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.65rem 0.85rem;
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  font-size: 0.88rem;
+}
+
+.activity-item-left {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.activity-item-time {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.activity-item-msg {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.activity-item-detail {
+  font-size: 0.78rem;
+  color: var(--accent-cyan-light);
+  font-family: var(--font-mono);
+}
+
+/* ==========================================================================
+   USER PROFILE CARD
+   ========================================================================== */
+.profile-card {
+  grid-column: span 5;
+}
+
+.profile-preset-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  margin-top: 1rem;
+}
+
+.profile-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.65rem 0.85rem;
+  background: var(--bg-surface-elevated);
+  border-radius: var(--radius-sm);
+  font-size: 0.88rem;
+  border: 1px solid var(--border-subtle);
+}
+
+.profile-row-label {
+  color: var(--text-secondary);
+}
+
+.profile-row-val {
+  font-weight: 600;
+  color: var(--accent-cyan-light);
+}
+
+/* ==========================================================================
+   DEMO DIRECTOR FLOATING TOOLBAR (Presenter Controls)
+   ========================================================================== */
+.demo-director-bar {
+  position: fixed;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 900;
+  background: rgba(15, 23, 42, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(99, 102, 241, 0.4);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(99, 102, 241, 0.25);
+  border-radius: var(--radius-full);
+  padding: 0.5rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  max-width: 95vw;
+  overflow-x: auto;
+}
+
+.director-title {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #38bdf8;
+  white-space: nowrap;
+  padding-right: 0.5rem;
+  border-right: 1px solid var(--border-subtle);
+}
+
+.director-btn-group {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.director-btn {
+  padding: 0.35rem 0.7rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: var(--radius-full);
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all var(--transition-fast);
+}
+
+.director-btn:hover {
+  background: var(--accent-indigo);
+  color: white;
+  border-color: var(--accent-indigo);
+}
+
+.director-btn.active {
+  background: var(--accent-cyan);
+  color: #090d16;
+  border-color: var(--accent-cyan);
+  font-weight: 700;
+}
+
+/* ==========================================================================
+   ACCESSIBLE DIALOG MODAL
+   ========================================================================== */
+dialog.accessible-modal {
+  margin: auto;
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  max-width: 580px;
+  width: 90vw;
+  padding: 2rem;
+  box-shadow: var(--shadow-lg), var(--glow-indigo);
+}
+
+dialog.accessible-modal::backdrop {
+  background: rgba(4, 7, 14, 0.85);
+  backdrop-filter: blur(8px);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.modal-header h2 {
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  font-weight: 700;
+}
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  margin-bottom: 1.75rem;
+}
+
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.setting-info h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.2rem;
+}
+
+.setting-info p {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+/* Form Controls */
+select.accessible-select, input.accessible-input {
+  background: var(--bg-surface-elevated);
+  border: 1px solid var(--border-medium);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  padding: 0.5rem 0.85rem;
+  font-size: 0.95rem;
+  font-family: inherit;
+}
+
+/* Toggle Switch */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 52px;
+  height: 28px;
+  flex-shrink: 0;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle-slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: var(--bg-surface-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: 28px;
+  transition: 250ms;
+}
+
+.toggle-slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 3px;
+  bottom: 3px;
+  background-color: #ffffff;
+  border-radius: 50%;
+  transition: 250ms;
+}
+
+input:checked + .toggle-slider {
+  background-color: var(--accent-indigo);
+  border-color: var(--accent-indigo);
+}
+
+input:checked + .toggle-slider:before {
+  transform: translateX(24px);
+}
+
+/* Responsive Grid */
+@media (max-width: 1024px) {
+  .feature-card {
+    grid-column: span 6;
+  }
+  .gesture-monitor-card, .device-status-card {
+    grid-column: span 12;
+  }
+  .activity-card, .profile-card {
+    grid-column: span 12;
+  }
+}
+
+@media (max-width: 640px) {
+  .feature-card {
+    grid-column: span 12;
+  }
+  .gesture-viz-container {
+    flex-direction: column;
+    text-align: center;
+  }
+  .device-details-grid {
+    grid-template-columns: 1fr;
+  }
+  .demo-director-bar {
+    border-radius: var(--radius-md);
+    bottom: 0.5rem;
+    padding: 0.4rem 0.6rem;
+  }
+}

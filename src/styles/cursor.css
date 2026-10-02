@@ -1,0 +1,258 @@
+/* ==========================================================================
+   SMART GESTURE CANVAS - CURSOR CONTROL PLAYGROUND STYLES
+   ========================================================================== */
+
+.cursor-view-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Cursor Control Top HUD */
+.cursor-control-hud {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 1rem 1.5rem;
+  flex-wrap: wrap;
+}
+
+.cursor-telemetry-badge {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.hud-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.hud-item .label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-weight: 600;
+}
+
+.hud-item .value {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.cursor-modes-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--bg-surface-elevated);
+  padding: 0.35rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+}
+
+.cursor-mode-btn {
+  padding: 0.5rem 0.85rem;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.cursor-mode-btn:hover {
+  color: var(--text-primary);
+}
+
+.cursor-mode-btn.active {
+  background: var(--accent-indigo);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.4);
+}
+
+/* Large Interactive Arena */
+.cursor-arena {
+  position: relative;
+  width: 100%;
+  height: 520px;
+  background: radial-gradient(circle at center, #17223b 0%, #0d1527 100%);
+  border: 2px solid var(--border-medium);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  cursor: none; /* Hide default cursor inside arena */
+}
+
+/* Grid guide lines */
+.arena-grid-lines {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+}
+
+/* Center crosshair & radar circles */
+.arena-center-mark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 180px;
+  height: 180px;
+  transform: translate(-50%, -50%);
+  border: 1px dashed rgba(99, 102, 241, 0.25);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+/* Interactive Target Bubbles inside Arena */
+.arena-target-bubble {
+  position: absolute;
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: rgba(6, 182, 212, 0.15);
+  border: 2px solid var(--accent-cyan);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 150ms ease, background-color 150ms ease, border-color 150ms ease;
+  user-select: none;
+  box-shadow: 0 0 16px rgba(6, 182, 212, 0.3);
+}
+
+.arena-target-bubble:hover, .arena-target-bubble.hovered {
+  transform: scale(1.18);
+  background: rgba(6, 182, 212, 0.35);
+  border-color: #ffffff;
+  box-shadow: 0 0 25px rgba(6, 182, 212, 0.6);
+}
+
+.arena-target-bubble.clicked {
+  transform: scale(0.9);
+  background: var(--color-success);
+  border-color: var(--color-success);
+}
+
+/* Simulated Cursor Element */
+#simulated-cursor {
+  position: absolute;
+  width: 32px;
+  height: 32px;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 50;
+  transition: transform 50ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.sim-cursor-pointer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.sim-cursor-dot {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 14px;
+  height: 14px;
+  transform: translate(-50%, -50%);
+  background: #ffffff;
+  border: 3px solid var(--accent-cyan-light);
+  border-radius: 50%;
+  box-shadow: 0 0 14px var(--accent-cyan-light);
+  transition: transform 100ms ease;
+}
+
+.sim-cursor-ripple {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 36px;
+  height: 36px;
+  transform: translate(-50%, -50%);
+  border: 2px solid var(--accent-indigo);
+  border-radius: 50%;
+  animation: cursor-radar 2s infinite;
+}
+
+@keyframes cursor-radar {
+  0% { transform: translate(-50%, -50%) scale(0.6); opacity: 0.9; }
+  100% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; }
+}
+
+#simulated-cursor.active-click .sim-cursor-dot {
+  transform: translate(-50%, -50%) scale(1.6);
+  background: var(--color-danger);
+  border-color: #ffffff;
+}
+
+/* Cursor Control Sliders Bar */
+.cursor-settings-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+}
+
+.slider-control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.slider-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.accessible-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--bg-surface-elevated);
+  outline: none;
+}
+
+.accessible-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--accent-cyan);
+  cursor: pointer;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
+  transition: transform var(--transition-fast);
+}
+
+.accessible-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
