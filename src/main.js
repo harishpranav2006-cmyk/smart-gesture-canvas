@@ -77,19 +77,27 @@ class App {
     // Quick feature cards on overview that open respective tabs
     const quickLinks = document.querySelectorAll('[data-nav-target]');
     quickLinks.forEach(link => {
-      const handleNavigation = () => {
+      const handleNavigation = (e) => {
+        if (e) {
+          e.preventDefault();
+        }
         soundService.playKeyClick();
-        const target = link.dataset.navTarget;
+        const target = link.dataset.navTarget || link.getAttribute('data-nav-target');
         this.switchTab(target);
       };
 
       link.addEventListener('click', handleNavigation);
       
+      // Ensure any clicks on children (like the arrow) don't get lost
+      Array.from(link.children).forEach(child => {
+        child.style.pointerEvents = 'none';
+      });
+      
       // Make accessible feature cards interactive via keyboard
       link.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
-          handleNavigation();
+          handleNavigation(e);
         }
       });
     });
