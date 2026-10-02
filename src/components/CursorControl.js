@@ -62,6 +62,9 @@ export class CursorControl {
       this.speedSlider.addEventListener('input', e => {
         this.speedMultiplier = parseFloat(e.target.value);
         if (this.speedVal) this.speedVal.textContent = `${this.speedMultiplier.toFixed(1)}x`;
+        if (this.hardware.setSpeed) {
+          this.hardware.setSpeed(this.speedMultiplier);
+        }
       });
     }
 

@@ -359,6 +359,15 @@ export class MockHardwareService {
     }
   }
 
+  setSpeed(multiplier) {
+    this.cursorSim.speed = 0.003 * multiplier;
+    this.emit('log', {
+      type: 'settings',
+      message: `Cursor speed multiplier set to ${multiplier}x`,
+      timestamp: Date.now()
+    });
+  }
+
   // Calibration Flow
   startCalibration() {
     this.calibrationState.active = true;

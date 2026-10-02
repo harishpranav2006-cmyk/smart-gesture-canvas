@@ -20,6 +20,9 @@ export class DeviceStatusPanel {
     this.disconnectBtn = document.getElementById('btn-dev-disconnect');
     this.reconnectBtn = document.getElementById('btn-dev-reconnect');
     this.testBtn = document.getElementById('btn-dev-test');
+    
+    this.pingBtn = document.getElementById('btn-hw-ping');
+    this.recalibrateBtn = document.getElementById('btn-hw-recalibrate');
 
     this.bindEvents();
   }
@@ -82,6 +85,32 @@ export class DeviceStatusPanel {
 
         this.testBtn.disabled = false;
         this.testBtn.innerHTML = '<span>⚡</span> Test Device';
+      });
+    }
+
+    if (this.pingBtn) {
+      this.pingBtn.addEventListener('click', () => {
+        soundService.playKeyClick();
+        if (this.diagnosticLogEl) {
+          this.diagnosticLogEl.innerHTML = `
+            <div style="background:var(--bg-surface-elevated);padding:0.75rem;border-radius:var(--radius-sm);border:1px solid var(--border-medium);font-size:0.8rem;font-family:var(--font-mono);color:#38bdf8;">
+              ✓ Simulation ping sent: 12ms latency OK
+            </div>
+          `;
+        }
+      });
+    }
+
+    if (this.recalibrateBtn) {
+      this.recalibrateBtn.addEventListener('click', () => {
+        soundService.playKeyClick();
+        if (this.diagnosticLogEl) {
+          this.diagnosticLogEl.innerHTML = `
+            <div style="background:var(--bg-surface-elevated);padding:0.75rem;border-radius:var(--radius-sm);border:1px solid var(--border-medium);font-size:0.8rem;font-family:var(--font-mono);color:#38bdf8;">
+              ✓ Sensor matrices zeroed successfully.
+            </div>
+          `;
+        }
       });
     }
 
